@@ -1,0 +1,6 @@
+[31-Dec-2017 11:04:47] PHP Notice:  Use of undefined constant E_RECOVERABLE_ERROR - assumed 'E_RECOVERABLE_ERROR' in /home/tulisaloinfo/public_html/system/classes/kohana/core.php on line 167
+[31-Dec-2017 11:04:48] PHP Fatal error:  Call to undefined function spl_object_hash() in /home/tulisaloinfo/public_html/system/classes/kohana/core.php on line 1109
+[10-Feb-2019 12:15:36] PHP Warning:  PHP Startup: Unable to load dynamic library '/opt/alt/php52/usr/lib64/php/modules/mysql.so' - libmysqlclient.so.18: cannot open shared object file: No such file or directory in Unknown on line 0
+[10-Feb-2019 12:15:36] PHP Warning:  PHP Startup: Unable to load dynamic library '/opt/alt/php52/usr/lib64/php/modules/mysqli.so' - libmysqlclient.so.18: cannot open shared object file: No such file or directory in Unknown on line 0
+[10-Feb-2019 12:15:36] PHP Warning:  PHP Startup: Unable to load dynamic library '/opt/alt/php52/usr/lib64/php/modules/pdo_mysql.so' - libmysqlclient.so.18: cannot open shared object file: No such file or directory in Unknown on line 0
+[10-Feb-2019 12:15:36] PHP Fatal error:  Call to undefined function mysql_connect() in /home/tulisaloinfo/public_html/modules/database/classes/kohana/database/mysql.php on line 49
