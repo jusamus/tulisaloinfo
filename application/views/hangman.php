@@ -67,6 +67,10 @@
         'insane' => 'Järjetöön (yli 20 kirjainta)'), !empty($_REQUEST['level']) ? $_REQUEST['level'] : '', array('id' => 'level'))?>
     &nbsp;&nbsp;
     <?=Form::button('new', 'Hae uusi sana', array('id' => 'new'))?>
+    <br/><br/>
+    <h4>Statistiikkaa</h4>
+    Kaikkiaan oikein arvattuja kirjaimia: <span id="correct"><?=$stats['correct']?></span><br/>
+    Kaikkiaan väärin arvattuja kirjaimia: <span id="incorrect"><?=$stats['incorrect']?></span><br/>
 <script type="text/javascript">
     $(document).ready(function(){
         $(document).unbind('keypress');
@@ -89,9 +93,11 @@
             
             $.getJSON('<?=URL::site('hangman/check')?>/'+clickedLetter, function($data){
                 var guessedCount = $('button.guessed').length;
-                $.each($data, function(i, item){
+                
+                $.each($data.indexes, function(i, item){
                     $('div#word').find('button[data-index='+item+']').text(clickedLetter).addClass('guessed');
                 });
+                
                 if(guessedCount < $('button.guessed').length) {                    
                     self.attr('disabled', 'disabled').css('background', '#afa');
                 }
@@ -100,6 +106,9 @@
                     $('span#lives').text(lives);
                     self.attr('disabled', 'disabled').css('background', '#faa');
                 }
+                
+                $('span#correct').text($data.stats.correct);
+                $('span#incorrect').text($data.stats.incorrect);
                 
                 if($('button.guessed').length === $('button.word').length) {
                     setTimeout(function(){
