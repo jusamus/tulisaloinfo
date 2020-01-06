@@ -24,11 +24,16 @@
         margin: 20px 0;
     }
     
+    #hangman div.lives {
+        font-size: 140%;
+        font-weight: bold;
+    }
+    
 </style>
-<div id="hangman">
 <center>
+<div id="hangman">
 <br/>
-<h4>Hirsipuu</h4>
+    <h4>Hirsipuu</h4>
     <div id="word">
     <?php
         $i = 0;
@@ -53,6 +58,8 @@
     ?>
     </div>
     <br/>
+    <div class="lives">Yrityksiä jäljellä: <span id="lives"></span></div>
+    <br/>
     <?=Form::select('level', array('' => 'Valitteppa vaikeusaste',
         'easy' => 'Heleppo (max 5 kirjainta)',
         'medium' => 'Kohtalaanen (6-10 kirjainta)',
@@ -69,15 +76,35 @@
             $('button.letter[data-letter='+key+']').trigger('click');
         });
         
+        var lives = 10;
+        $('span#lives').text(lives);
+        
         $('button.letter').click(function(){
             var clickedLetter = $(this).attr('data-letter');
             var self = $(this);
             
             $.getJSON('<?=URL::site('hangman/check')?>/'+clickedLetter, function($data){
+                var guessedCount = $('button.guessed').length;
                 $.each($data, function(i, item){
-                    $('div#word').find('button[data-index='+item+']').text(clickedLetter);
+                    $('div#word').find('button[data-index='+item+']').text(clickedLetter).addClass('guessed');
                 });
-                self.attr('disabled', 'disabled').css('background', '#faa');
+                if(guessedCount < $('button.guessed').length) {                    
+                    self.attr('disabled', 'disabled').css('background', '#afa');
+                }
+                else {
+                    lives--;
+                    $('span#lives').text(lives);
+                    self.attr('disabled', 'disabled').css('background', '#faa');
+                }
+                
+                if($('button.guessed').length === $('button.word').length) {
+                    setTimeout(function(){alert('Hyvä hyvä, tehtävä suoritettu!')}, 200);
+                    $('button#new').trigger('click');
+                }
+                else if(lives == 0) {
+                    setTimeout(function(){alert('Moon pahoillani, hävisit pelin! Yritäppä uusiksi!')}, 200);
+                    $('button#new').trigger('click');
+                }
             });
             
         });
