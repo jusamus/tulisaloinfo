@@ -72,10 +72,12 @@
         $(document).unbind('keypress');
         $(document).keypress(function(e) {
             var key = String.fromCharCode(e.which);
-            if($('button.letter[data-letter='+key+']').attr('disabled') == 'disabled') {
+            if($('button.letter[data-letter='+key+']').is(':disabled')) {
                 return false;
             }
-            $('button.letter[data-letter='+key+']').trigger('click');
+            else {
+                $('button.letter[data-letter='+key+']').trigger('click');
+            }            
         });
         
         var lives = 10;
