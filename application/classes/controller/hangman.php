@@ -64,6 +64,21 @@ class Controller_Hangman extends Controller {
                     $indexes[] = $index;
                 }
             }
+                       
+            $guess_stats = ORM::factory('guess');
+            $guess_stats->letter = $guess;
+            $guess_stats->time = time();
+            
+            if(count($indexes))
+            {    
+                $guess_stats->correct = 1;
+            }
+            else {
+                $guess_stats->correct = 0;
+            }
+            
+            $guess_stats->save();
+            
             die(json_encode($indexes));
         }
 } // End Hangman
