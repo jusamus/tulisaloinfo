@@ -72,7 +72,8 @@
         'insane' => 'Järjetöön (yli 20 kirjainta)'), !empty($_REQUEST['level']) ? $_REQUEST['level'] : '', array('id' => 'level'))?>
     &nbsp;&nbsp;
     <?=Form::button('new', 'Hae uusi sana', array('id' => 'new'))?>
-    <br/><br/>
+    <br/>
+    <hr/>
     <div id="stats">
         <h4>Statistiikkaa (since 6.1.2020)</h4>
         <ul>
@@ -83,6 +84,8 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $(document).unbind('keypress');
+        $('div#hangmanimage img').attr('src', '<?=URL::site('assets/img/hangman')?>/10.png'');
+        
         $(document).keypress(function(e) {
             var key = String.fromCharCode(e.which);
             if($('button.letter[data-letter='+key+']').is(':disabled')) {
@@ -118,6 +121,7 @@
                 
                 $('span#correct').text($data.stats.correct);
                 $('span#incorrect').text($data.stats.incorrect);
+                $('div#hangmanimage img').attr('src', '<?=URL::site('assets/img/hangman')?>/'+lives+'.png');
                 
                 if($('button.guessed').length === $('button.word').length) {
                     setTimeout(function(){

@@ -35,9 +35,11 @@
 				</div>
 			</div>
 		</div>
-		</div>
-		<div id="push" class="clear"></div>
+            <div id="hangmanimage">
+                <?=HTML::image('assets/img/hangman/10.png')?>
+            </div>
 	</div>
+	<div id="push" class="clear"></div>
 </div>
 <div id="footer">
 	<?=$footer?>
