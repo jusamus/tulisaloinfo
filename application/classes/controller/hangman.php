@@ -15,6 +15,7 @@ class Controller_Hangman extends Controller {
             
             $this->request->response = View::factory('hangman')
                 ->set('word', $word)
+                ->set('stats', $this->stats())
                 ->render();
         }
         
@@ -53,15 +54,45 @@ class Controller_Hangman extends Controller {
                 ->render());
         }
         
+        private function stats()
+        {
+            $stats = array();
+            
+            $query = DB::select(DB::expr('COUNT(id) correct_count'))
+                ->from('guesses')
+                ->where('correct', '=', 1)
+                ->execute();
+
+            $result = $query->as_array();
+
+            $stats['correct'] = isset($result[0]['correct_count']) ? $result[0]['correct_count'] : 0;
+            
+            $query = DB::select(DB::expr('COUNT(id) incorrect_count'))
+                ->from('guesses')
+                ->where('correct', '=', 0)
+                ->execute();
+
+            $result = $query->as_array();
+
+            $stats['incorrect'] = isset($result[0]['incorrect_count']) ? $result[0]['incorrect_count'] : 0;
+            
+            return $stats;
+        }
+        
         public function action_check() {
-            $indexes = array();
+            $return = array(
+                'indexes' => array(),
+                'stats' => array(),
+            );
+            
             $guess = $this->request->param('guess');
             $word = Session::instance()->get('word');
+            
             foreach (UTF8::str_split($word) as $index => $letter)
             {
                 if($letter === $guess)
                 {
-                    $indexes[] = $index;
+                    $return['indexes'][] = $index;
                 }
             }
                        
@@ -69,7 +100,7 @@ class Controller_Hangman extends Controller {
             $guess_stats->letter = $guess;
             $guess_stats->time = time();
             
-            if(count($indexes))
+            if(count($return['indexes']))
             {    
                 $guess_stats->correct = 1;
             }
@@ -79,6 +110,8 @@ class Controller_Hangman extends Controller {
             
             $guess_stats->save();
             
-            die(json_encode($indexes));
+            $return['stats'] = $this->stats();
+            
+            die(json_encode($return));
         }
 } // End Hangman
