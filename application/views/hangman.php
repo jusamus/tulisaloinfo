@@ -68,9 +68,13 @@
     &nbsp;&nbsp;
     <?=Form::button('new', 'Hae uusi sana', array('id' => 'new'))?>
     <br/><br/>
-    <h4>Statistiikkaa</h4>
-    Kaikkiaan oikein arvattuja kirjaimia: <span id="correct"><?=$stats['correct']?></span><br/>
-    Kaikkiaan väärin arvattuja kirjaimia: <span id="incorrect"><?=$stats['incorrect']?></span><br/>
+    <div id="stats">
+        <h4>Statistiikkaa (since 6.1.2020)</h4>
+        <ul>
+            <li>Kaikkiaan oikein arvattuja kirjaimia: <span id="correct"><?=$stats['correct']?></span></li>
+            <li>Kaikkiaan väärin arvattuja kirjaimia: <span id="incorrect"><?=$stats['incorrect']?></span></li>
+        </ul>
+    </div>
 <script type="text/javascript">
     $(document).ready(function(){
         $(document).unbind('keypress');
