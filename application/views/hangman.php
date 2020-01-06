@@ -29,6 +29,11 @@
         font-weight: bold;
     }
     
+    #hangman ul {
+        list-style-type: none;
+        font-size: 110%;
+    }
+    
 </style>
 <center>
 <div id="hangman">

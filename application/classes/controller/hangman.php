@@ -51,6 +51,7 @@ class Controller_Hangman extends Controller {
             
             die(View::factory('hangman')
                 ->set('word', $word)
+                ->set('stats', $this->stats())
                 ->render());
         }
         
