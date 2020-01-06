@@ -63,8 +63,6 @@
     ?>
     </div>
     <br/>
-    <div class="lives">Yrityksiä jäljellä: <span id="lives"></span></div>
-    <br/>
     <?=Form::select('level', array('' => 'Valitteppa vaikeusaste',
         'easy' => 'Heleppo (max 5 kirjainta)',
         'medium' => 'Kohtalaanen (6-10 kirjainta)',
@@ -115,7 +113,6 @@
                 }
                 else {
                     lives--;
-                    $('span#lives').text(lives);
                     self.attr('disabled', 'disabled').css('background', '#faa');
                 }
                 
