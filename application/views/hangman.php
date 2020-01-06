@@ -71,7 +71,10 @@
     $(document).ready(function(){
         $(document).unbind('keypress');
         $(document).keypress(function(e) {
-            var key = String.fromCharCode(e.which)
+            var key = String.fromCharCode(e.which);
+            if($('button.letter[data-letter='+key+']').attr('disabled') == 'disabled') {
+                return false;
+            }
             $('button.letter[data-letter='+key+']').trigger('click');
         });
         
