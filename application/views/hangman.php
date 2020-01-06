@@ -63,7 +63,12 @@
 </div>
 </center>
 <script type="text/javascript">
-    $(document).ready(function(){        
+    $(document).ready(function(){
+        $(document).keypress(function(e) {
+            var key = String.fromCharCode(e.which)
+            $('button.letter[data-letter='+key+']').trigger('click');
+        });
+        
         $('button.letter').click(function(){
             var clickedLetter = $(this).attr('data-letter');
             var self = $(this);
