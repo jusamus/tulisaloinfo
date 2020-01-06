@@ -67,8 +67,6 @@
         'insane' => 'Järjetöön (yli 20 kirjainta)'), !empty($_REQUEST['level']) ? $_REQUEST['level'] : '', array('id' => 'level'))?>
     &nbsp;&nbsp;
     <?=Form::button('new', 'Hae uusi sana', array('id' => 'new'))?>
-</div>
-</center>
 <script type="text/javascript">
     $(document).ready(function(){
         $(document).keypress(function(e) {
@@ -117,4 +115,5 @@
         })
     });
 </script>
-
+</div>
+</center>
