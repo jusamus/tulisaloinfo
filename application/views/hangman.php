@@ -69,6 +69,7 @@
     <?=Form::button('new', 'Hae uusi sana', array('id' => 'new'))?>
 <script type="text/javascript">
     $(document).ready(function(){
+        $(document).unbind('keypress');
         $(document).keypress(function(e) {
             var key = String.fromCharCode(e.which)
             $('button.letter[data-letter='+key+']').trigger('click');
@@ -96,12 +97,16 @@
                 }
                 
                 if($('button.guessed').length === $('button.word').length) {
-                    setTimeout(function(){alert('Hyvä hyvä, tehtävä suoritettu!')}, 200);
-                    $('button#new').trigger('click');
+                    setTimeout(function(){
+                        alert('Hyvä hyvä, tehtävä suoritettu!');
+                        $('button#new').trigger('click');
+                    }, 200);
                 }
                 else if(lives == 0) {
-                    setTimeout(function(){alert('Moon pahoillani, hävisit pelin! Yritäppä uusiksi!')}, 200);
-                    $('button#new').trigger('click');
+                    setTimeout(function(){
+                        alert('Moon pahoillani, hävisit pelin! Yritäppä uusiksi!');
+                        $('button#new').trigger('click');
+                    }, 200);                    
                 }
             });
             
