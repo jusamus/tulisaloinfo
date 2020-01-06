@@ -84,7 +84,7 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $(document).unbind('keypress');
-        $('div#hangmanimage img').attr('src', '<?=URL::site('assets/img/hangman')?>/10.png'');
+        $('div#hangmanimage img').attr('src', '<?=URL::site('assets/img/hangman')?>/10.png');
         
         $(document).keypress(function(e) {
             var key = String.fromCharCode(e.which);
