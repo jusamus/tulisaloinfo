@@ -88,7 +88,7 @@
         
         $(document).keypress(function(e) {
             var key = String.fromCharCode(e.which);
-            if($('button.letter[data-letter='+key+']').is(':disabled')) {
+            if($('button.letter[data-letter='+key+']').is(':disabled') || keyPressed) {
                 return false;
             }
             else {
