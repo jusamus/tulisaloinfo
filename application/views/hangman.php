@@ -92,9 +92,9 @@
                 return false;
             }
             else {
-                if(!keyPressed) {
-                    $('button.letter[data-letter='+key+']').trigger('click');
+                if(!keyPressed) {                    
                     keyPressed = TRUE;
+                    $('button.letter[data-letter='+key+']').trigger('click');
                 }
             }            
         });
