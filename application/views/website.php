@@ -35,7 +35,7 @@
 				</div>
 			</div>
 		</div>
-            <div id="hangmanimage">
+            <div id="hangmanimage" style="float: right">
                 <?=HTML::image('assets/img/hangman/10.png')?>
             </div>
 	</div>
