@@ -84,13 +84,18 @@
         $(document).unbind('keypress');
         $('div#hangmanimage img').attr('src', '<?=URL::site('assets/img/hangman')?>/10.png');
         
+        var keyPressed = FALSE;
+        
         $(document).keypress(function(e) {
             var key = String.fromCharCode(e.which);
             if($('button.letter[data-letter='+key+']').is(':disabled')) {
                 return false;
             }
             else {
-                $('button.letter[data-letter='+key+']').trigger('click');
+                if(!keyPressed) {
+                    $('button.letter[data-letter='+key+']').trigger('click');
+                    keyPressed = TRUE;
+                }
             }            
         });
         
@@ -132,6 +137,8 @@
                         $('button#new').trigger('click');
                     }, 200);                    
                 }
+                
+                keyPressed = FALSE;
             });
             
         });
