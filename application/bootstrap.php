@@ -66,6 +66,12 @@ Kohana::modules(array(
  * defaults for the URI.
  */
 
+Route::set('minesweeper', '<controller>(/<action>(/<guess>))', array('controller' => 'minesweeper')) 
+	->defaults(array(
+		'controller' => 'minesweeper',
+		'action' => 'index'
+	)); 
+
 Route::set('hangman', '<controller>(/<action>(/<guess>))', array('controller' => 'hangman')) 
 	->defaults(array(
 		'controller' => 'hangman',
