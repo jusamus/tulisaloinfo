@@ -76,12 +76,12 @@
 
     .suitdiamonds:before, .suitdiamonds:after {
       content: "◆";
-      color: #ff0000;
+      color: #f00;
     }
 
     .suithearts:before, .suithearts:after {
       content: "♥";
-      color: #ff0000;
+      color: #f00;
     }
 
     .suitclubs:before, .suitclubs:after {
@@ -94,17 +94,22 @@
       color: #000;
     }
 
+    .suitjoker:before, .suitjoker:after {
+      content: "JOKER";
+      color: #f00;
+    }
+
     div[class*='suit']:before {
       position: absolute;
       font-size: 12px;
-      left: 2px;
+      left: 5px;
       top: 2px;
     }
 
     div[class*='suit']:after {
       position: absolute;
       font-size: 12px;
-      right: 2px;
+      right: 5px;
       bottom: 2px;
     }
     
@@ -153,13 +158,42 @@
         constructor(suit, rank) {
             this.suit = suit;
             this.rank = rank;
+            this.flipped = false;
         }
         
         flip() {
-            let card = this.element;
-                        
+            let self = this;
+            let card = self.element;
+            let width = parseInt(card.css('width'));
+            let padding = parseInt(card.css('paddingLeft'));
+            let margin = parseInt(card.css('marginLeft'));
+            
             if(card.hasClass('back')) {
-                card.removeClass('back').addClass('suit'+this.suit).html('<p>'+this.rank+'</p>');
+                card.animate({
+                    width: '0px',
+                    paddingLeft: '0px',
+                    paddingRight: '0px',
+                    marginRight: (width - margin) + 'px',
+                    marginLeft: (width + margin) + 'px',
+                    backGroundSize: '11px 1px'
+                }, {
+                   duration: 200,
+                   complete: function(){
+                        card.removeClass('back').addClass('suit'+self.suit).html('<p>'+self.rank+'</p>');
+                        
+                        self.flipped = true;
+                        
+                        card.animate({
+                            width: width + 'px',
+                            paddingLeft: padding + 'px',
+                            paddingRight: padding + 'px',
+                            marginRight: margin + 'px',
+                            marginLeft: margin + 'px',
+                            backGroundSize: '11px 11px'
+                        }, 200);
+                   }
+                });
+                
             }
             /*else {
                 card.removeClass('suit'+this.suit).addClass('back').children().remove();
@@ -196,6 +230,9 @@
                     this.cards.push(new Card(suits[i], ranks[j]));
                 }
             }
+            
+            this.cards.push(new Card('joker', 'J'));
+            this.cards.push(new Card('joker', 'J'));
         }
         
         shuffle() {            
@@ -280,14 +317,21 @@
             let game = this;
             
             $.each(this.deck.cards, function(i, card){
-               card.render().click(function(){
-                   game.rotate();
-               }).appendTo('#board'); 
+                let element = card.render();
+                element.click(function(){
+                    if(!card.flipped) {
+                        game.rotate();
+                    }
+                }).appendTo('#board'); 
             });
         }
     }
     
     $(document).ready(function(){       
+        
+        $('.life').live('click', function(){
+            $(this).remove();
+        })
         
         var game = new Game();
         game.create(['Jussi', 'Justus', 'Luukas', 'Alisa']);
