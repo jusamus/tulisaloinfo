@@ -65,7 +65,7 @@ $(document).ready(function(){
 			$(this).css('backgroundColor',active_bgcolor);
 		});			
 		$('div#content').fadeTo('fast',0.01,function(){
-			$.get('/page/'+link.attr('id'),function(data){
+			$.get(link.attr('id') == 'minesweeper' ? 'minesweeper' : '/page/'+link.attr('id'),function(data){
 				$('div#content').html(data).fadeTo('fast',1);
 				$('ul#navlist a').not(link).removeClass('active');			
 				$(link).addClass('active').css('color',active_color);

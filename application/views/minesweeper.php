@@ -7,17 +7,47 @@
         padding: 5px 10px;
     }
     
+    hr {
+        margin: 5px;
+    }
+    
+    h2 {
+        font-size: 200%;
+        padding-top: 20px;
+        display: inline-block;
+    }
+    
+    button {
+        padding: 10px 20px;
+        font-size: 140%;
+    }
+    
     .player {
         border: 2px solid #ccc;
-        width: 100px;
+        width: 110px;
+        height: 80px;
+        text-align: center;
+        position: relative;
     }
     
     .player .name {
+        float: left;
         margin: 5px;
+        display: inline-block;
+        font-size: 120%;
+    }
+    
+    .player .points {
+        float: right;
+        margin: 5px;
+        color: #4A78B3;
+        font-size: 120%;
     }
     
     .player .lives {
         margin: 5px;
+        position: absolute;
+        left: 5px;
     }
     
     .player .life {
@@ -30,8 +60,42 @@
         border-color: #009900;
     }
     
-    #board {
-      margin: 50px;
+    .info {
+        width: 160px;
+        height: 60px;
+        position: relative;
+    }
+    
+    .info h4 {
+        margin: 5px;
+        position: absolute;
+        top: 15px;
+    }
+    
+    #mine h4 {
+        right: 0px;
+    }
+    
+    #mine .card {
+        left: 0px;
+        top: 0px;
+    }
+    
+    #life h4 {
+        left: 0px;
+    }
+    
+    #life .card {
+        right: 0px;
+        top: 0px;
+    }
+    
+    #mine {
+        float: left;
+    }
+    
+    #life {
+        float: right;
     }
 
     /* For modern browsers */
@@ -47,19 +111,24 @@
 
     /* For IE 6/7 (trigger hasLayout) */
     #board {
-        zoom:1;
+        zoom: 1;
+        margin: 50px;
+        position: relative;
+        width: 550px;
+        height: 450px;
     }
     
     .card {
-      position: relative;
-      float: left;
+      display: inline-block;
+      position: absolute;
       margin-right: 2px;
-      width: 30px;
+      width: 29px;
       height: 50px;
       border-radius: 2px;
       background: white;
       -webkit-box-shadow: 3px 3px 7px rgba(0,0,0,0.3);
       box-shadow: 3px 3px 7px rgba(0,0,0,0.3);
+      border: 1px solid #999;
     }
     
     .back {
@@ -121,6 +190,18 @@
 <center>
 <div id="minesweeper">
 <br/>
+    <div class="info" id="mine">
+        <h4>Miinakortti</h4>
+        <div id="minecard" class="card">
+            <p>A</p>
+        </div>
+    </div>
+    <div class="info" id="life">
+        <h4>Elämäkortti</h4>
+        <div id="lifecard" class="card suitjoker">
+            <p>J</p>
+        </div>
+    </div>
     <h2>Miinaharava</h2>
     <div id="players"></div>
     <br />
@@ -130,16 +211,50 @@
         <button id="new">Aloita uusi</button>
     </div>
 <script type="text/javascript">
-       
+    jQuery.fn.shake = function(color,interval,distance,times){
+        let jTarget = $(this);
+        let left = parseInt(jTarget.css('left'));
+        
+        setTimeout(function(){
+            interval = typeof interval == "undefined" ? 100 : interval;
+            distance = typeof distance == "undefined" ? 5 : distance;
+            times = typeof times == "undefined" ? 5 : times;
+            
+            if(color == 'red') {                
+                jTarget.css({
+                    'background-color': '#fdd',
+                    'border': '1px solid #d66'
+                });
+            }
+            else if(color == 'green') {               
+                jTarget.css({
+                    'background-color': '#efe',
+                    'border': '1px solid #6d6'
+                });
+            }
+
+            for(let iter=0;iter<(times+1);iter++){
+                jTarget.animate({
+                    left: ((iter%2==0 ? (left + distance) : left + (distance*-1)))
+                }, interval);
+            }
+
+            return jTarget.animate({
+                left: left
+            },interval);
+        }, 500);
+    }
+    
     class Player {
         constructor(index, name) {
             this.index = index;
             this.name = name;
-            this.lives = 3;
+            this.lives = 2;
+            this.points = 0;
         }        
         
         render() {
-            this.element = $('<div class="player"><h4 class="name">'+this.name+'</h4><p class="lives"></p></div>');
+            this.element = $('<div class="player" data-index="'+this.index+'"><span class="name">'+this.name+'</span><span class="points">'+this.points+'</span><hr/><span class="lives"></span></div>');
             this.element.data('player', this);
             
             for(let i = 1; i <= this.lives; i++) {
@@ -151,13 +266,37 @@
         
         setActive() {
             this.element.addClass('active');
-        }        
+        }
+        
+        gainLife() {
+            if(this.lives < 5) {
+                this.lives++;
+            }
+            
+            this.points += 10;
+            $('div.player[data-index='+this.index+']').find('.lives').append($('<span class="life">♥</span>'));
+        }
+        
+        loseLife() {
+            if(this.lives > 0) {
+                this.lives--;
+            }
+            
+            this.points -= 10;
+            
+            if(this.points < 0) {
+                this.points = 0;
+            }
+            
+            $('div.player[data-index='+this.index+']').find('.life:last').remove();
+        }
     }
     
     class Card {
-        constructor(suit, rank) {
+        constructor(suit, rank, value) {
             this.suit = suit;
             this.rank = rank;
+            this.value = value;
             this.flipped = false;
         }
         
@@ -179,7 +318,7 @@
                 }, {
                    duration: 200,
                    complete: function(){
-                        card.removeClass('back').addClass('suit'+self.suit).html('<p>'+self.rank+'</p>');
+                        card.removeClass('back').addClass('suit'+self.suit).html('<p>'+(self.rank == 'joker' ? 'J' : self.rank)+'</p>');
                         
                         self.flipped = true;
                         
@@ -224,15 +363,16 @@
         create() {
             let suits = ['spades', 'hearts', 'diamonds', 'clubs'];
             let ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+            let values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
             
             for (let i = 0; i < suits.length; i++) {
                 for (let j = 0; j < ranks.length; j++) {
-                    this.cards.push(new Card(suits[i], ranks[j]));
+                    this.cards.push(new Card(suits[i], ranks[j], values[j]));
                 }
             }
             
-            this.cards.push(new Card('joker', 'J'));
-            this.cards.push(new Card('joker', 'J'));
+            this.cards.push(new Card('joker', 'joker', 14));
+            this.cards.push(new Card('joker', 'joker', 14));
         }
         
         shuffle() {            
@@ -244,6 +384,47 @@
                 this.cards[loc1] = this.cards[loc2];
                 this.cards[loc2] = tmp;
              }
+        }
+        
+        find(suit = null, rank = null) {
+            let cards = [];
+            
+            $.each(this.cards, function(i, card){
+                if(suit !== null && rank !== null) {
+                    if(card.suit == suit && card.rank == rank) {
+                        cards.push(card);
+                    }
+                }
+                else if(suit !== null) {
+                    if(card.suit == suit) {
+                        cards.push(card);
+                    }
+                }
+                else if(rank !== null) {
+                    if(card.rank == rank) {
+                        cards.push(card);
+                    }
+                }
+            });
+            
+            return cards;
+        }
+        
+        findRandom(type = 'mine') {
+            let indexes = [];
+            
+            $.each(this.cards, function(i, card){
+                if(!card.flipped) {
+                    if(type == 'mine' && card.value <= 10) {
+                        indexes.push(i);
+                    }
+                    else if(type == 'life' && card.value > 10) {
+                        indexes.push(i);
+                    }             
+                }
+            });
+            
+            return this.cards[indexes[Math.floor(Math.random() * indexes.length)]];
         }
     }
     
@@ -257,7 +438,9 @@
             this.turns = 0;
             this.deck = new Deck();
             this.activePlayer = 0;
-            
+            this.minecard = 'A';
+            this.lifecard = 'joker';
+
             $('div#board').children().remove();
             $('div.player').hide();
         }
@@ -265,15 +448,15 @@
         create(players = []) {
             
             if(players.length) {
-                for(let i = 1; i <= players.length; i++) {
-                    this.newPlayer(i, players[i-1]);
+                for(let i = 0; i < players.length; i++) {
+                    this.newPlayer(i, players[i]);
                 }
             }
             else {                
                 let playerCount = prompt('Montako pelaajaa? (1-4)');
 
-                for(let i = 1; i <= playerCount; i++) {
-                    this.newPlayer(i, prompt('Anna pelaajan '+i+' nimi'));
+                for(let i = 0; i < playerCount; i++) {
+                    this.newPlayer(i, prompt('Anna pelaajan '+(i + 1)+' nimi'));
                 }
             }
             
@@ -310,19 +493,77 @@
                 }                
             }
             
+            if(this.activePlayer.lives == 0) {
+                this.rotate();
+            }
+            
             this.activePlayer.setActive();
         }
         
         fillBoard() {
             let game = this;
+            let i = 0;
+            let x = 0;
+            let y = 0;
             
             $.each(this.deck.cards, function(i, card){
-                let element = card.render();
-                element.click(function(){
-                    if(!card.flipped) {
-                        game.rotate();
+                setTimeout(function(){
+                    let element = card.render();
+                    element.click(function(){
+                        if(!card.flipped) {
+                            game.activePlayer.points += card.value;
+                            
+                            if(game.minecard == card.rank) {
+                                game.activePlayer.loseLife();
+                                card.element.shake('red');
+                                game.minecard = game.deck.findRandom('mine').rank;
+                                
+                                $('#minecard').removeClass('suitjoker');
+                                $('#minecard').find('p').text(game.minecard == 'joker' ? 'J' : game.minecard);
+                                $('#minecard').shake();
+                                
+                                if(game.minecard == 'joker') {
+                                    $('#minecard').addClass('suitjoker');
+                                }
+                            }
+                            
+                            if(game.lifecard == card.rank) {
+                                game.activePlayer.gainLife();
+                                card.element.shake('green');
+                                game.lifecard = game.deck.findRandom('life').rank;
+                                
+                                $('#lifecard').removeClass('suitjoker');
+                                $('#lifecard').find('p').text(game.lifecard == 'joker' ? 'J' : game.lifecard);
+                                $('#lifecard').shake();
+                                
+                                if(game.lifecard == 'joker') {
+                                    $('#lifecard').addClass('suitjoker');
+                                }
+                            }
+                            
+                            $('.player[data-index='+game.activePlayer.index+']').find('.points').text(game.activePlayer.points);
+                            
+                            if(game.activePlayer.lives == 0) {
+                                $('.player[data-index='+game.activePlayer.index+']').shake('red');
+                            }
+                            
+                            game.rotate();
+                        }
+                    }).appendTo('#board').animate({
+                        left: x + 'px',
+                        top: y + 'px'
+                    }, 100);
+
+                    i++;
+
+                    if(i % 9 == 0 ) {
+                        x = 0;
+                        y += 70;
                     }
-                }).appendTo('#board'); 
+                    else {
+                        x += 65;    
+                    }
+                }, i * 50);
             });
         }
     }
