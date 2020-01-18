@@ -34,8 +34,8 @@
 					<?=$news?>
 				</div>
 			</div>
-		</div>
-            <div id="hangmanimage" style="float: right">
+		</div>            
+            <div id="content-info" style="float: right; width: 280px">
                 <?=HTML::image('assets/img/hangman/10.png')?>
             </div>
 	</div>

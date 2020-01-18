@@ -18,6 +18,7 @@
     }
     
     button {
+        margin: 20px 0 0 40px;
         padding: 10px 20px;
         font-size: 140%;
     }
@@ -144,7 +145,7 @@
     }
 
     .suitdiamonds:before, .suitdiamonds:after {
-      content: "◆";
+      content: "♦";
       color: #f00;
     }
 
@@ -189,7 +190,6 @@
 </style>
 <center>
 <div id="minesweeper">
-<br/>
     <div class="info" id="mine">
         <h4>Miinakortti</h4>
         <div id="minecard" class="card">
@@ -202,14 +202,11 @@
             <p>J</p>
         </div>
     </div>
-    <h2>Miinaharava</h2>
+    <button id="new">Aloita uusi peli</button>
     <div id="players"></div>
     <br />
     <div id="board"></div>
     <br />
-    <div id="controls">
-        <button id="new">Aloita uusi</button>
-    </div>
 <script type="text/javascript">
     jQuery.fn.shake = function(color,interval,distance,times){
         let jTarget = $(this);
@@ -251,6 +248,7 @@
             this.name = name;
             this.lives = 2;
             this.points = 0;
+            this.rewardGained = false;
         }        
         
         render() {
@@ -268,27 +266,29 @@
             this.element.addClass('active');
         }
         
-        gainLife() {
-            if(this.lives < 5) {
-                this.lives++;
+        gainLife(noPoints = false) {
+            if(!noPoints) {
+                this.points += 10;
             }
             
-            this.points += 10;
-            $('div.player[data-index='+this.index+']').find('.lives').append($('<span class="life">♥</span>'));
+            if(this.lives < 3) {
+                this.lives++;
+                $('div.player[data-index='+this.index+']').find('.lives').append($('<span class="life">♥</span>'));
+            }            
         }
         
         loseLife() {
-            if(this.lives > 0) {
-                this.lives--;
-            }
             
             this.points -= 10;
             
-            if(this.points < 0) {
-                this.points = 0;
+            if(this.lives > 0) {
+                this.lives--;
+                $('div.player[data-index='+this.index+']').find('.life:last').remove();
             }
             
-            $('div.player[data-index='+this.index+']').find('.life:last').remove();
+            if(this.points < 0) {
+                this.points = 0;
+            }           
         }
     }
     
@@ -453,7 +453,7 @@
                 }
             }
             else {                
-                let playerCount = prompt('Montako pelaajaa? (1-4)');
+                let playerCount = prompt('Montako pelaajaa?');
 
                 for(let i = 0; i < playerCount; i++) {
                     this.newPlayer(i, prompt('Anna pelaajan '+(i + 1)+' nimi'));
@@ -513,6 +513,11 @@
                         if(!card.flipped) {
                             game.activePlayer.points += card.value;
                             
+                            if(game.activePlayer.points >= 100 && !game.activePlayer.rewardGained) {
+                                game.activePlayer.rewardGained = true;
+                                game.activePlayer.gainLife(true);                                
+                            }
+                            
                             if(game.minecard == card.rank) {
                                 game.activePlayer.loseLife();
                                 card.element.shake('red');
@@ -552,7 +557,7 @@
                     }).appendTo('#board').animate({
                         left: x + 'px',
                         top: y + 'px'
-                    }, 100);
+                    }, 1000);
 
                     i++;
 
@@ -570,15 +575,26 @@
     
     $(document).ready(function(){       
         
+        $('#content-info').html('<div style="padding: 20px 20px 0 0"><h4>Säännöt</h4>\n\
+<p>Tämä on alunperin Justus -poikani ideoima korttipeli joka sopii 2-6 pelaajalle\n\
+(voi olla enemmänkin jos haluaa :)</p>\n\
+<p>Säännöt on helpot: kukin pelaaja kääntää vuorollaan yhden kortin. Kaikista korteista\n\
+saa pisteitä kortin arvon mukaan: A = 1p, 2 = 2p jne. Jokerista saa 14 pistettä.</p>\n\
+<p>Jos käännetty kortti on "miinakortti", lähtee pelaajalta yksi elämä ja 10 pistettä.\n\
+Miinakortti vaihtuu tällöin toiseksi satunnaiseksi 1p - 10p arvoiseksi kortiksi. Mikäli\n\
+pelaajalla ei ole elämiä, hänen pelinsä loppuu.</p>\n\
+<p>Jos käännetty kortti on "elämäkortti", saa pelaaja yhden lisäelämän ja 10 lisäpistettä.\n\
+Elämiä voi olla maksimissaan 3. Elämäkortti vaihtuu myös tällöin joksikin toiseksi 11p - 14p\n\
+arvoiseksi kortiksi</p>\n\
+<p>Jos pelaaja onnistuu saamaan 100 pistettä, hän saa yhden lisäelämän, mutta ei lisäpisteitä.</p></div>');
+        
         $('.life').live('click', function(){
             $(this).remove();
         })
         
-        var game = new Game();
-        game.create(['Jussi', 'Justus', 'Luukas', 'Alisa']);
+        var game;
         
-        $('button#new').click(function(){
-            
+        $('button#new').click(function(){            
             game = new Game();
             game.create();
             

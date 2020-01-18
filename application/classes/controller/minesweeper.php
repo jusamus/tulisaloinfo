@@ -1,10 +1,11 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Minesweeper extends Controller {      
+class Controller_Minesweeper extends Controller_Website {      
     
         public function action_index()
         {            
-            $this->request->response = View::factory('minesweeper')
+            $this->content = View::factory('minesweeper')
                 ->render();
         }
+        
 } // End Minesweeper

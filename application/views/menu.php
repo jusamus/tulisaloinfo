@@ -21,9 +21,17 @@
 			'<span>'.$item->title.'</span>',
 			array(
 				'id' => $item->path,
-				'class'	=> strpos($item->path, $current_page) === 0 ? 'active' : ''))?>
+				'class'	=> strpos($item->path, $current_page) === 0 ? 'active page' : 'page'))?>
 	</li>
 <?php endforeach?>
+        <li>
+                <?=HTML::anchor(
+			'minesweeper',
+			'<span>Miinaharava -korttipeli</span>',
+			array(
+				'id' => 'minesweeper',
+				'class'	=> strpos('minesweeper', $current_page) === 0 ? 'active' : ''))?>
+        </li>
 </ul>
 <script type="text/javascript">
 	
@@ -45,7 +53,8 @@ $(document).ready(function(){
 		$('div#right-col-content').slideDown('fast');
 	});
 	
-	$('ul#navlist a').click(function(){
+	$('ul#navlist a.page').click(function(){
+		$('div#content-info').html('<?=HTML::image('assets/img/hangman/10.png')?>');
 		if($(this).attr('id') == 'logout') return true;
 		var link = $(this);
 		$('ul#navlist a').not(link).animate({

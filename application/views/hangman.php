@@ -82,9 +82,9 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $(document).unbind('keypress');
-        $('div#hangmanimage img').attr('src', '<?=URL::site('assets/img/hangman')?>/10.png');
+        $('div#content-info img').attr('src', '<?=URL::site('assets/img/hangman')?>/10.png');
         
-        var keyPressed = FALSE;
+        var keyPressed = false;
         
         $(document).keypress(function(e) {
             var key = String.fromCharCode(e.which);
@@ -123,7 +123,7 @@
                 
                 $('span#correct').text($data.stats.correct);
                 $('span#incorrect').text($data.stats.incorrect);
-                $('div#hangmanimage img').attr('src', '<?=URL::site('assets/img/hangman')?>/'+lives+'.png');
+                $('div#content-info img').attr('src', '<?=URL::site('assets/img/hangman')?>/'+lives+'.png');
                 
                 if($('button.guessed').length === $('button.word').length) {
                     setTimeout(function(){
@@ -138,7 +138,7 @@
                     }, 200);                    
                 }
                 
-                keyPressed = FALSE;
+                keyPressed = false;
             });
             
         });
