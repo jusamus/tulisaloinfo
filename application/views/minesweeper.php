@@ -372,6 +372,7 @@
             }
             
             this.cards.push(new Card('joker', 'joker', 14));
+            
             this.cards.push(new Card('joker', 'joker', 14));
         }
         
@@ -441,6 +442,8 @@
             this.minecard = 'A';
             this.lifecard = 'joker';
 
+            $('#minecard').find('p').text('A');
+            $('#lifecard').removeClass('suitjoker').addClass('suitjoker').find('p').text('J');
             $('div#board').children().remove();
             $('div.player').hide();
         }
@@ -592,12 +595,25 @@ arvoiseksi kortiksi</p>\n\
             $(this).remove();
         })
         
-        var game;
+        var game = false;
         
-        $('button#new').click(function(){            
-            game = new Game();
-            game.create();
+        $('button#new').click(function(){
+            let players = [];
             
+            if(game) {
+                $.each(game.players, function(){
+                    players.push(this.name);
+                });
+            }
+
+            game = new Game();
+
+            if(players.length) {
+                game.create(confirm('Pelataanko samoilla pelaajilla?') ? players : []);
+            }
+            else {
+                game.create();
+            }            
         });
         
     });
